@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block style %}
+<style>
+    .ts-notice.is-positive {
+        background-color: var(--ts-positive-500);
+        color: var(--ts-white);
+    }
+
+    .ts-notice.is-positive .title {
+        background: var(--ts-white);
+        color: var(--ts-positive-600);
+    }
+
+    #status[data-status="connected"] .is-negative,
+    #status[data-status="disconnected"] .is-positive {
+        display: none;
+    }
+</style>
+{% endblock style %}
+
+{% block content %}
+    {% if not token %}
+        {# input token #}
+        <form action="{{ url_for('session') }}" method="POST">
+            <div class="ts-row">
+                <div class="column is-fluid">
+                    <div class="ts-input is-fluid">
+                        <input type="text" placeholder="Session Token" name="token">
+                    </div>
+                </div>
+                <div class="column">
+                    <button class="ts-button">Submit</button>
+                </div>
+            </div>
+        </form>
+    {% else %}
+        {# controller #}
+        <div class="ts-row is-center-aligned">
+            <div id="status" class="column" style="width: 500px" data-status="connected">
+                <div class="ts-notice is-positive">
+                    <div class="title">Connected</div>
+                    <div class="content">{{ token }}</div>
+                </div>
+                <div class="ts-notice is-negative">
+                    <div class="title">Disconnected</div>
+                    <div class="content">{{ token }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ts-space"></div>
+
+        <div class="ts-row is-center-aligned">
+            <a href="{{ url_for('session') }}" class="ts-button is-negative">Leave</a>
+        </div>
+
+        <div class="ts-space"></div>
+
+        <div class="ts-row is-evenly-divided">
+            <div class="column is-center-aligned">
+                <div id="left" class="ts-content is-tertiary is-vertically-very-padded is-rounded is-interactive">
+                    <div class="ts-center">
+                        <div class="ts-icon is-heading is-angle-left-icon"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-center-aligned">
+                <div id="right" class="ts-content is-tertiary is-vertically-very-padded is-rounded is-interactive">
+                    <div class="ts-center">
+                        <div class="ts-icon is-heading is-angle-right-icon"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            const $ = (selector) => document.querySelector(selector);
+
+            function request(action) {
+                return fetch(`{{ url_for("slides_control") }}?action=${action}`, {
+                    headers: {
+                        "Authorization": `Bearer {{ token }}`
+                    }
+                });
+            }
+
+            $("#left").addEventListener("click", (ev) => {
+                request("left");
+            });
+
+            $("#right").addEventListener("click", (ev) => {
+                request("right");
+            });
+
+            // check every 5s
+            setInterval(async () => {
+                let res = await fetch(`{{ url_for('status') }}`, {
+                    headers: {
+                        "Authorization": `Bearer {{ token }}`
+                    }
+                });
+                let status = await res.json();
+
+                $("#status").dataset.status = status ? "connected" : "disconnected";
+                $("#left").classList.toggle("is-disabled", !status);
+                $("#right").classList.toggle("is-disabled", !status);
+            }, 5000);
+        </script>
+    {% endif %}
+{% endblock content %}

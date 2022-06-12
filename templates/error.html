@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="ts-header is-huge">{{ error }}</div>
+    <a class="ts-text is-link" href="javascript:history.go(-1)">Return to previous page.</a>
+
+    <script>
+        document.documentElement.dataset.scheme = "dark";
+    </script>
+{% endblock content %}

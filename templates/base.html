@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page }} | Remote Session Slides Control</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocas/4.0.4/tocas.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tocas/4.0.4/tocas.min.js"></script>
+    {% block style %}
+    {% endblock style%}
+</head>
+<body>
+    <div class="ts-center">
+        <div class="ts-container">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </div>
+</body>
+</html>

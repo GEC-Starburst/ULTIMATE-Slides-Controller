@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {# flash message #}
+    {% if get_flashed_messages() %}
+        {% for msg in get_flashed_messages() %}
+            <div class="ts-notice">
+                <div class="title">System</div>
+                <div class="content">{{ msg }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <h1 class="ts-header is-huge">Remote Slides Control</h1>
+    {# content #}
+    {% if token %}
+        <div class="ts-box">
+            <div class="ts-content is-dark is-inverted is-dense">
+                Session Token
+            </div>
+            <div class="ts-content">
+                {{ token }}
+            </div>
+        </div>
+        Share this link so they can control your slides:
+        <a class="ts-text is-link" href="{{ share_url }}">{{ share_url }}</a>
+        <div class="ts-space"></div>
+        <a class="ts-button is-negative" href="{{ url_for('end_session') }}" style="color: var(--ts-gray-50);">End Session</a>
+
+        <script>
+            document.querySelector(".ts-button").addEventListener("click", (ev) => {
+                ev.preventDefault();
+                if (confirm("Are you sure to end the session? All clients would be disconnected!")) {
+                    location.href = ev.target.href;
+                }
+            });
+        </script>
+    {% else %}
+        <a class="ts-button" href="{{ url_for('create_session') }}" style="color: var(--ts-gray-50);">Start Session</a>
+    {% endif %}
+{% endblock content %}
